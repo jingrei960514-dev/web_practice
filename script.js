@@ -149,6 +149,45 @@
     }
   }
 
+  function initMap() {
+    const mapEl = document.getElementById("map-container");
+    if (!mapEl || typeof L === "undefined") return;
+
+    const taipei101 = [25.0339, 121.5645];
+    const map = L.map(mapEl, { scrollWheelZoom: false }).setView(taipei101, 14);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
+
+    const markerIcon = L.divIcon({
+      className: "map-marker",
+      html: '<span class="map-marker__pin" aria-hidden="true"></span>',
+      iconSize: [28, 28],
+      iconAnchor: [14, 28],
+      popupAnchor: [0, -28],
+    });
+
+    L.marker(taipei101, { icon: markerIcon })
+      .addTo(map)
+      .bindPopup("台北 101")
+      .openPopup();
+
+    mapEl.addEventListener("focus", function enableScrollZoom() {
+      map.scrollWheelZoom.enable();
+    });
+
+    mapEl.addEventListener("blur", function disableScrollZoom() {
+      map.scrollWheelZoom.disable();
+    });
+
+    window.addEventListener("resize", function () {
+      map.invalidateSize();
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
     if (themeToggle) {
@@ -158,5 +197,6 @@
     initSmoothScroll();
     initReveal();
     initYear();
+    initMap();
   });
 })();
